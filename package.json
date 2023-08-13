@@ -20,7 +20,8 @@
   "homepage": "https://github.com/Ruihang2017/EmployeeTracker#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "jshint": "^2.12.0",
-    "mysql2": "^2.2.5"
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.2.5",
+    "node-fetch": "^2.6.12"
   }
 }
