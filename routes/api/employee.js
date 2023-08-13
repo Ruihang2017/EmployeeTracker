@@ -33,7 +33,83 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    res.status(200).json({ msg: 'post ok' })
+    const { firstName, lastName, role, manager } = req.body;
+
+    if (!firstName || !lastName || !role || !manager) { res.status(400).json({ err: `Bad request.` }); return; }
+
+    let role_id_id, manager_id;
+    const managerName = manager.split(' ');
+
+    db.query(`SELECT * FROM role WHERE title = ?;`, role,
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ err: `Err1: ${err}` });
+                return;
+            } else {
+                role_id_id = results[0].id;
+                db.query(`
+                SELECT * 
+                FROM employee
+                WHERE first_name = ? AND last_name = ?;`,
+                    managerName,
+                    (err, results) => {
+                        if (err) {
+                            res.status(500).json({ err: `Err1: ${err}` });
+                            return;
+                        } else {
+                            manager_id = results[0].id;
+                            db.query(`
+                                INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                                VALUES (?, ?, ?, ?);`,
+                                [firstName, lastName, role_id_id, manager_id],
+                                (err, results) => {
+                                    if (err) {
+                                        res.status(500).json({ err: `Err1: ${err}` });
+                                        return;
+                                    } else {
+                                        res.status(200).json(results);
+                                    }
+                                })
+                        }
+                    })
+            }
+        })
+})
+
+
+router.put('/', (req, res) => {
+    const { name, role } = req.body;
+
+    if (!name || !role) { res.status(400).json({ err: `Bad request.` }); return; }
+    const [firstName, lastName] = name.split(' ');
+    console.log(firstName);
+    console.log(lastName);
+
+    let role_id;
+    db.query(`SELECT * FROM role WHERE title = ?;`, role,
+        (err, results) => {
+            if (err) {
+                res.status(500).json({ err: `Err1: ${err}` });
+                return;
+            } else {
+                role_id = results[0].id;
+                // console.log(role_id);
+                db.query(`
+                    UPDATE employee
+                    SET role_id = ?
+                    WHERE first_name = ? AND last_name = ?;`,
+                    [role_id, firstName, lastName],
+                    (err, results) => {
+                        if (err) {
+                            res.status(500).json({ err: `Err2: ${err}` });
+                            return;
+                        } else {
+                            res.status(200).json(results);
+                        }
+                    })
+
+            }
+        })
 })
 
 module.exports = router;
