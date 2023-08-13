@@ -1,37 +1,23 @@
 const express = require('express');
-const path = require('path');
-
-const { clog } = require('./middleware/clog');
-const api = require('./routes/index.js');
-
-const PORT = process.env.PORT || 3001;
+const routes = require('./routes');
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 // Import custom middleware
+const { clog } = require('./middleware/clog');
 app.use(clog);
 
 // Middleware for parsing JSON and urlencoded from data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(express.static('public'));
 
-app.use('/api', api);
-app.use(express.static('public'));
-
-
-//  GET Route from homepage
-app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, '/public/index.html'));
-});
-
-// Get Route for note page
-app.get('/notes', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, '/public/notes.html'));
-});
+app.use(routes);
 
 //  deligate the rest of get request to the home page
 app.get('*', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, '/public/index.html'));
+    res.status(200).send('send all inquiry through /api');
 });
 
 app.listen(PORT, () => {
