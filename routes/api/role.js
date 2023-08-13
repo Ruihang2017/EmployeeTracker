@@ -22,10 +22,6 @@ router.get('/', (req, res) => {
     });
 })
 
-// router.post('/', (req, res) => {
-//     res.status(200).json({ msg: 'post ok' })
-// })
-
 router.post('/', (req, res) => {
     const { name, salary, department } = req.body;
     if (!name || !salary || !department) { res.status(400).json({ err: `Bad request.` }); return; }
@@ -62,7 +58,6 @@ router.post('/', (req, res) => {
                 const str = `
                 INSERT INTO role (title, salary, department_id)
                 VALUES ("${name}", ${salary}, ${department_id});`
-                // console.log(str);
                 db.query(str, (err, results) => {
                     if (err) {
                         res.status(500).json({ err: `Err3: ${err}` })

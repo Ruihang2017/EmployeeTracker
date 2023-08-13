@@ -93,7 +93,6 @@ router.put('/', (req, res) => {
                 return;
             } else {
                 role_id = results[0].id;
-                // console.log(role_id);
                 db.query(`
                     UPDATE employee
                     SET role_id = ?
